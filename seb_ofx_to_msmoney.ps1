@@ -112,7 +112,7 @@ $xmlWriter.WriteStartElement("OFX")
                             $XmlWriter.WriteStartElement("STMTTRN")
                             $XmlWriter.WriteElementString("TRNTYPE",$TRNTYPE) # Beroende på minus eller positivt
                             $XmlWriter.WriteElementString("DTPOSTED",$DTPOSTED) # Hitta datum
-                            $XmlWriter.WriteElementString("TRNAMT",$decBelopp.ToString()) # Beloppet, debit har minus och credit har plus
+                            $XmlWriter.WriteElementString("TRNAMT",$decBelopp.ToString()) # Beloppet, debit har minus och credit har plus. Need to use ToString to get the right decimal sign for matching MsMoney.
                             $XmlWriter.WriteElementString("FITID",$FITID) # Unik identfierare, kanske använda New-Guid?
                             $XmlWriter.WriteElementString("NAME",$_.Text.trim()) # Från texten
                             $XmlWriter.WriteElementString("MEMO",$_.Text.trim()) # Från texten
