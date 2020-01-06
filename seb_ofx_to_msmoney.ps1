@@ -1,4 +1,5 @@
 function SEB_date_to_OFX_date {
+    # SEB uses yyyy-MM-dd but OFX likes yyyyMMdd
     param (
         $datum
     )
@@ -69,8 +70,6 @@ $xmlWriter.WriteStartElement("OFX")
                 $XmlWriter.WriteElementString("CODE",0)
                 $xmlwriter.WriteElementString("SEVERITY","INFO")
                 $xmlwriter.WriteEndElement() # <-- stänger STATUS
-            
-            #$XmlWriter.WriteElementString("DTSERVER",$dateForFirstTransaction) # Hitta datum för första transaktion och skapa datumet - läge för en funktion
             $XmlWriter.WriteElementString("DTSERVER",$dateForLastTransaction)
             $XmlWriter.WriteElementString("LANGUAGE","ENG")
             $xmlwriter.WriteEndElement() # <-- stänger SONRS
@@ -91,7 +90,6 @@ $xmlWriter.WriteStartElement("OFX")
                     $xmlwriter.WriteEndElement() # <-- stänger BANKACCTFROM
                 $XmlWriter.WriteStartElement("BANKTRANLIST")
                     $XmlWriter.WriteElementString("DTSTART",$dateForFirstTransaction) # Hitta datum
-                    
                     $XmlWriter.WriteElementString("DTEND",$dateForLastTransaction) # Hitta datum
 ################ Loopa igenom alla transaktioner
                     Import-Csv -Path $csvFileName -Header Datum,Text,Belopp -Delimiter ";" | ForEach-Object  { 
