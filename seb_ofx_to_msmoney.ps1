@@ -92,8 +92,8 @@ $xmlWriter.WriteStartElement("OFX")
                     $XmlWriter.WriteElementString("DTSTART",$dateForFirstTransaction) # Hitta datum
                     $XmlWriter.WriteElementString("DTEND",$dateForLastTransaction) # Hitta datum
 ################ Loopa igenom alla transaktioner
-                    Import-Csv -Path $csvFileName -Header Datum,Text,Belopp -Delimiter ";" | ForEach-Object  { 
-                        $decBelopp=0
+                    Import-Csv -Path $csvFileName -Header Datum,Text,Belopp -Delimiter ";" | ForEach-Object {
+                        [int]$decBelopp=0
                         try {
                             [decimal]$decBelopp= [System.Convert]::ToDecimal($_.Belopp,[cultureinfo]::GetCultureInfo('sv-SE'))    
                             }
@@ -112,8 +112,13 @@ $xmlWriter.WriteStartElement("OFX")
                             $XmlWriter.WriteElementString("DTPOSTED",$DTPOSTED) # Hitta datum
                             $XmlWriter.WriteElementString("TRNAMT",$decBelopp.ToString()) # Beloppet, debit har minus och credit har plus. Need to use ToString to get the right decimal sign for matching MsMoney.
                             $XmlWriter.WriteElementString("FITID",$FITID) # Unik identfierare, kanske använda New-Guid?
-                            $XmlWriter.WriteElementString("NAME",$_.Text.trim()) # Från texten
-                            $XmlWriter.WriteElementString("MEMO",$_.Text.trim()) # Från texten
+                            [string]$LeftText = $_.Text
+                            $pos = $LeftText.IndexOf("/")
+                            if ($pos -ne -1) {
+                                $LeftText = $LeftText.Substring(0, $pos)
+                            } 
+                            $XmlWriter.WriteElementString("NAME",$LeftText.trim()) # Från texten
+                            $XmlWriter.WriteElementString("MEMO",$LeftText.trim()) # Från texten
                             $xmlwriter.WriteEndElement() # <-- stänger STMTTRN
                             }
                         }
