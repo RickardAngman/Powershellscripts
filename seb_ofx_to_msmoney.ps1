@@ -13,7 +13,7 @@ function GetFirstTransactionDate {
     )
     [datetime]$toreturn = [datetime]::Today
     [datetime]$datetimeDate= [datetime]::Today
-    Import-Csv -Path $FileName -Header Datum,Text,Belopp -Delimiter ";" | ForEach-Object  { 
+    Import-Csv -Path $FileName -Header Datum,Text,Belopp -Delimiter "," | ForEach-Object  { 
         try {
             [datetime]$datetimeDate= [datetime]::ParseExact($_.Datum,'yyyy-MM-dd',$null)
         }
@@ -35,7 +35,7 @@ function GetLastTransactionDate {
     )
     [datetime]$toreturn = "2000-01-01"
     [datetime]$datetimeDate= "2000-01-01"
-    Import-Csv -Path $FileName -Header Datum,Text,Belopp -Delimiter ";" | ForEach-Object  { 
+    Import-Csv -Path $FileName -Header Datum,Text,Belopp -Delimiter "," | ForEach-Object  { 
         try {
             [datetime]$datetimeDate= [datetime]::ParseExact($_.Datum,'yyyy-MM-dd',$null)
         }
@@ -99,7 +99,7 @@ $xmlWriter.WriteStartElement("OFX")
                 $XmlWriter.WriteElementString("CURDEF","SEK")
                 $XmlWriter.WriteStartElement("BANKACCTFROM")
                     $XmlWriter.WriteElementString("BANKID","iCOFX")
-                    $XmlWriter.WriteElementString("ACCTID","1234567890")
+                    $XmlWriter.WriteElementString("ACCTID","1234567890") # 2234567890 = Sparkontot | 1234567890 = Lönekontot
                     $XmlWriter.WriteElementString("ACCTTYPE","SAVINGS")
                     $xmlwriter.WriteEndElement() # <-- stänger BANKACCTFROM
                 $XmlWriter.WriteStartElement("BANKTRANLIST")
