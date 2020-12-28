@@ -99,7 +99,7 @@ $xmlWriter.WriteStartElement("OFX")
                 $XmlWriter.WriteElementString("CURDEF","SEK")
                 $XmlWriter.WriteStartElement("BANKACCTFROM")
                     $XmlWriter.WriteElementString("BANKID","iCOFX")
-                    $XmlWriter.WriteElementString("ACCTID","1234567890") # 2234567890 = Sparkontot | 1234567890 = Lönekontot
+                    $XmlWriter.WriteElementString("ACCTID","53543329987") # 2234567890 = Sparkontot | 1234567890 = Lönekontot | 53540293744 = Gemensamt kortkonto | 53543329987 = Gemensamt sparkonto
                     $XmlWriter.WriteElementString("ACCTTYPE","SAVINGS")
                     $xmlwriter.WriteEndElement() # <-- stänger BANKACCTFROM
                 $XmlWriter.WriteStartElement("BANKTRANLIST")
