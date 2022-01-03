@@ -62,11 +62,44 @@ function AddTransactionDatesToFilename {
     Write-Host "NewFileName:"$NewFileName
     Rename-Item -Path $FileName -NewName $NewFileName
 }
+function RunMacroOnExcelFile {
+    param (
+        $FileName
+    )    
+    # start Excel 
+    $excel = New-Object -comobject Excel.Application  
+    # Macro file
+    $pathtothisscript= split-path -parent $PSCommandPath
+    $macroworkbookfile= $pathtothisscript+"\makro.xlsm"
+    # open file 
+    $excel.Workbooks.Open($macroworkbookfile)
+    $excel.Workbooks.Open($FileName)
+    #make it visible (just to check what is happening) 
+    $excel.Visible = $false
+    #access the Application object and run a macro 
+    $app = $excel.Application 
+    $app.Run("makro.xlsm!rensa_kontoutdrag")
+    $excel.Quit()
+}
+
+function GetAccountNumberFromExcelFile {
+    param (
+        $FileName
+    )
+    $excel = New-Object -comobject Excel.Application
+    $workbook = $excel.workbooks.open($FileName)
+    $sheet = $workbook.Worksheets.Item("Sheet1")
+    $rawdata=$sheet.Cells.Item(5,1).Text
+    $excel.Quit()
+    return $rawdata -replace "[^0-9]" , ''
+}
 
 $dir = (New-Object -ComObject Shell.Application).NameSpace('shell:Downloads').Self.Path
 $excelFileName=$dir+"\"+"kontoutdrag.xlsx" # The supposed name that SEB exports
 $csvFileName=$dir+"\"+"kontoutdrag.csv"
 $ofxFileName=$dir+"\"+"ofxForImport.ofx"
+$accountNumber= GetAccountNumberFromExcelFile $excelFileName
+RunMacroOnExcelFile $excelFileName 
 $dateForFirstTransaction=GetFirstTransactionDate($csvFileName)
 $dateForLastTransaction=GetLastTransactionDate($csvFileName)
 # Set The Formatting
@@ -99,7 +132,7 @@ $xmlWriter.WriteStartElement("OFX")
                 $XmlWriter.WriteElementString("CURDEF","SEK")
                 $XmlWriter.WriteStartElement("BANKACCTFROM")
                     $XmlWriter.WriteElementString("BANKID","iCOFX")
-                    $XmlWriter.WriteElementString("ACCTID","53543329987") # 2234567890 = Sparkontot | 1234567890 = Lönekontot | 53540293744 = Gemensamt kortkonto | 53543329987 = Gemensamt sparkonto
+                    $XmlWriter.WriteElementString("ACCTID",$accountNumber) # 2234567890 = Sparkontot | 1234567890 = Lönekontot | 53540293744 = Gemensamt kortkonto | 53543329987 = Gemensamt sparkonto
                     $XmlWriter.WriteElementString("ACCTTYPE","SAVINGS")
                     $xmlwriter.WriteEndElement() # <-- stänger BANKACCTFROM
                 $XmlWriter.WriteStartElement("BANKTRANLIST")
